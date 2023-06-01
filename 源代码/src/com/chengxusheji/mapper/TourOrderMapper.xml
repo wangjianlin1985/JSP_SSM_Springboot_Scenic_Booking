@@ -1,0 +1,50 @@
+﻿<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.TourOrderMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加订单记录 -->
+	<insert id="addTourOrder" parameterType="tourOrder">
+		insert into t_tourOrder(tourObj,startDate,totalPersonNum,totalPrice,telephone,orderMemo,userObj,orderTime,shzt,shhf) values 
+		(#{tourObj.tourId},#{startDate},#{totalPersonNum},#{totalPrice},#{telephone},#{orderMemo},#{userObj.user_name},#{orderTime},#{shzt},#{shhf})
+	</insert>
+
+	<!-- 按照查询条件分页查询订单记录 -->
+	<select id="queryTourOrder" resultMap="tourOrderMap" >
+		select t_tourOrder.* from t_tourOrder,t_tour,t_userInfo ${where} and t_tourOrder.tourObj = t_tour.tourId and t_tourOrder.userObj = t_userInfo.user_name limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="tourOrderMap" type="tourOrder">
+        <id property="orderId" column="orderId" />
+        <association property="tourObj" column="tourObj" select="com.chengxusheji.mapper.TourMapper.getTour" />
+        <association property="userObj" column="userObj" select="com.chengxusheji.mapper.UserInfoMapper.getUserInfo" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有订单记录 -->
+	<select id="queryTourOrderList" resultMap="tourOrderMap" >
+		select t_tourOrder.* from t_tourOrder,t_tour,t_userInfo ${where} and t_tourOrder.tourObj = t_tour.tourId and t_tourOrder.userObj = t_userInfo.user_name
+	</select>
+
+    <!-- 按照查询条件的订单记录数 -->
+	<select id="queryTourOrderCount" resultType="int">
+		select count(*) from t_tourOrder,t_tour,t_userInfo ${where} and t_tourOrder.tourObj = t_tour.tourId and t_tourOrder.userObj = t_userInfo.user_name
+	</select>
+
+	<!-- 根据主键查询某个订单记录 -->
+	<select id="getTourOrder" parameterType="int" resultMap="tourOrderMap">
+		select * from t_tourOrder where t_tourOrder.orderId = #{orderId}
+	</select>
+
+	<!-- 更新订单记录 -->
+	<update id="updateTourOrder" parameterType="tourOrder">
+		update t_tourOrder set tourObj=#{tourObj.tourId},startDate=#{startDate},totalPersonNum=#{totalPersonNum},totalPrice=#{totalPrice},telephone=#{telephone},orderMemo=#{orderMemo},userObj=#{userObj.user_name},orderTime=#{orderTime},shzt=#{shzt},shhf=#{shhf} where orderId = #{orderId}
+	</update>
+
+	<!-- 删除订单记录 -->
+	<delete id="deleteTourOrder" parameterType="int">
+		delete from t_tourOrder where orderId=#{orderId}
+	</delete>
+
+</mapper>

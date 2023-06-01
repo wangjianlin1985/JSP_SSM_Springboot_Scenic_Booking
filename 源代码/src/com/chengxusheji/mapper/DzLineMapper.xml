@@ -1,0 +1,48 @@
+﻿<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.DzLineMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加定制线路记录 -->
+	<insert id="addDzLine" parameterType="dzLine">
+		insert into t_dzLine(lineName,linePhoto,startPlace,zhuti,linePrice,lineDesc,tuijianFlag,hitNum,addTime) values 
+		(#{lineName},#{linePhoto},#{startPlace},#{zhuti},#{linePrice},#{lineDesc},#{tuijianFlag},#{hitNum},#{addTime})
+	</insert>
+
+	<!-- 按照查询条件分页查询定制线路记录 -->
+	<select id="queryDzLine" resultMap="dzLineMap" >
+		select t_dzLine.* from t_dzLine ${where} limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="dzLineMap" type="dzLine">
+        <id property="lineId" column="lineId" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有定制线路记录 -->
+	<select id="queryDzLineList" resultMap="dzLineMap" >
+		select t_dzLine.* from t_dzLine ${where}
+	</select>
+
+    <!-- 按照查询条件的定制线路记录数 -->
+	<select id="queryDzLineCount" resultType="int">
+		select count(*) from t_dzLine ${where}
+	</select>
+
+	<!-- 根据主键查询某个定制线路记录 -->
+	<select id="getDzLine" parameterType="int" resultMap="dzLineMap">
+		select * from t_dzLine where t_dzLine.lineId = #{lineId}
+	</select>
+
+	<!-- 更新定制线路记录 -->
+	<update id="updateDzLine" parameterType="dzLine">
+		update t_dzLine set lineName=#{lineName},linePhoto=#{linePhoto},startPlace=#{startPlace},zhuti=#{zhuti},linePrice=#{linePrice},lineDesc=#{lineDesc},tuijianFlag=#{tuijianFlag},hitNum=#{hitNum},addTime=#{addTime} where lineId = #{lineId}
+	</update>
+
+	<!-- 删除定制线路记录 -->
+	<delete id="deleteDzLine" parameterType="int">
+		delete from t_dzLine where lineId=#{lineId}
+	</delete>
+
+</mapper>
